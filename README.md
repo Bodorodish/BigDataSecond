@@ -85,3 +85,18 @@
 7. Код Apache Spark трансформации данных из снежинки/звезды в отчеты в Neo4j.
 8. Код Apache Spark трансформации данных из снежинки/звезды в отчеты в MongoDB.
 9. Код Apache Spark трансформации данных из снежинки/звезды в отчеты в Valkey.
+
+___
+
+Запуск:
+```
+docker-compose run --rm spark-etl
+```
+
+Проверка clickhouse:
+docker exec -it clickhouse_db clickhouse-client -u admin --password password -d reports_db --query "SELECT * FROM report_top_10_products LIMIT 10"
+Список из 10 самых популярных товаров
+
+Проверка mongodb:
+docker exec -it mongo_db mongosh -u admin -p password --authenticationDatabase admin --eval "db.getSiblingDB('reports_db').report_top_10_products.find().limit(1)"
+от же самый топ товаров, но в формате JSON
