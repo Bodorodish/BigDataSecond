@@ -4,11 +4,14 @@ services:
     container_name: postgres_db_lab2
     environment:
       POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: docker logs postgres_db_lab2
       POSTGRES_DB: lab2_db
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5433:5432"
     volumes:
+      - ./init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
+      - ./data:/data
       - ./pg_data:/var/lib/postgresql/data
 
   clickhouse:
