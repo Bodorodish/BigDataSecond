@@ -1,6 +1,0 @@
-columns format version: 1
-4 columns:
-`product_id` Int32
-`product_name` String
-`total_sold_quantity` Int64
-`total_revenue` Float64
