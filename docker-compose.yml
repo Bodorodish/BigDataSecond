@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_db_lab2
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: lab2_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse_db
+    environment:
+      CLICKHOUSE_USER: admin
+      CLICKHOUSE_PASSWORD: password
+      CLICKHOUSE_DB: reports_db
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - ./ch_data:/var/lib/clickhouse
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongo_db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo_data:/data/db
+
+  spark-etl:
+    image: apache/spark:3.5.0
+    container_name: spark_etl
+    user: root
+    depends_on:
+      - postgres
+      - clickhouse
+      - mongodb
+    volumes:
+      - ./src:/app
+      - ./data:/data
+    command: >
+      /opt/spark/bin/spark-submit 
+      --packages org.postgresql:postgresql:42.6.0,com.clickhouse:clickhouse-jdbc:0.4.6,org.mongodb.spark:mongo-spark-connector_2.12:3.0.1 
+      --master local[*] 
+      /app/main.py
